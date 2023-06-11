@@ -1,18 +1,34 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, StyleSheet} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
+  useEffect(() => {
+    
+    setEmail('');
+    setPassword('');
+  }, []);
 
-    if (email === 'yusra@gmail.com' && password === '123') {
-      // Successful login
-      navigation.navigate('ProfileScreen');
-    } else {
-      // Failed login
-      alert('Invalid email or password');
+  const handleLogin = async () => {
+    
+    try {
+      const storedEmail = await AsyncStorage.getItem('email');
+      const storedPassword = await AsyncStorage.getItem('password');
+
+      if (email === storedEmail && password === storedPassword) {
+        
+        navigation.navigate('Profile');
+      } else {
+        
+        alert('Invalid email or password');
+      }
+    } catch (error) {
+      console.log(error);
+      alert('Error occurred during login');
     }
   };
 
@@ -35,11 +51,12 @@ const LoginScreen = ({ navigation }) => {
       <Button title="Login" onPress={handleLogin} />
       <Button
         title="Create an account"
-        onPress={() => navigation.navigate('SignupScreen')}
+        onPress={() => navigation.navigate('Signup')}
       />
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

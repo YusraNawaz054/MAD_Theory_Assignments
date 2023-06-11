@@ -1,22 +1,31 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const SignupScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleSignup = () => {
-
+  const handleSignup = async () => {
     if (password !== confirmPassword) {
       
       alert('Passwords do not match');
       return;
     }
-
     
-    alert('Signup successful');
+    try {
+      await AsyncStorage.setItem('email', email);
+      await AsyncStorage.setItem('password', password);
+      alert('Signup successful');
+      navigation.navigate('Login');
+    } catch (error) {
+      console.log(error);
+      alert('Error occurred during signup');
+    }
   };
+  
 
   return (
     <View style={styles.container}>
@@ -44,11 +53,12 @@ const SignupScreen = ({ navigation }) => {
       <Button title="Signup" onPress={handleSignup} />
       <Button
         title="Back to Login"
-        onPress={() => navigation.navigate('LoginScreen')}
+        onPress={() => navigation.navigate('Login')}
       />
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
